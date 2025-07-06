@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { FaMicrophone, FaStop, FaCopy, FaSave, FaQuestionCircle } from 'react-icons/fa';
-import { RecordRTCPromisesHandler, invokeSaveAsDialog } from 'recordrtc';
+import { RecordRTCPromisesHandler } from '@cnakazawa/react-mic';
 
 export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
@@ -110,8 +110,15 @@ export default function Home() {
   };
 
   const downloadAudio = async () => {
-    const blob = await recorderRef.current.getBlob();
-    invokeSaveAsDialog(blob, 'recording.webm');
+    if (recorderRef.current) {
+      const blob = await recorderRef.current.getBlob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'recording.webm';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
   };
 
   return (
@@ -137,60 +144,4 @@ export default function Home() {
         <label className="block mb-2">Select Template:</label>
         <select
           value={template}
-          onChange={(e) => setTemplate(e.target.value)}
-          className="border p-2 rounded w-full"
-        >
-          <option value="general">General</option>
-          <option value="meeting_notes">Meeting Notes</option>
-          <option value="brainstorming_ideas">Brainstorming Ideas</option>
-          <option value="quick_notes">Quick Notes</option>
-          <option value="summary">Summary</option>
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block mb-2">Transcription:</label>
-        <textarea
-          value={editedTranscription}
-          onChange={(e) => setEditedTranscription(e.target.value)}
-          className="border p-2 rounded w-full h-32"
-          placeholder="Transcription will appear here..."
-        />
-        <div className="mt-2">
-          <button
-            onClick={copyToClipboard}
-            className="px-4 py-2 bg-gray-500 text-white rounded mr-2"
-            disabled={!editedTranscription}
-          >
-            <FaCopy /> Copy
-          </button>
-          <button
-            onClick={saveToNotion}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-            disabled={!editedTranscription || isProcessing}
-          >
-            <FaSave /> Save to Notion
-          </button>
-        </div>
-      </div>
-      <div className="mb-4">
-        <button
-          onClick={queryGemini}
-          className="px-4 py-2 bg-purple-500 text-white rounded"
-          disabled={!editedTranscription || isProcessing}
-        >
-          <FaQuestionCircle /> Query Gemini
-        </button>
-      </div>
-      {queryResponse && (
-        <div className="mb-4">
-          <label className="block mb-2">Gemini Response:</label>
-          <textarea
-            value={queryResponse}
-            readOnly
-            className="border p-2 rounded w-full h-32"
-          />
-        </div>
-      )}
-    </div>
-  );
-}
+          onChange={(e) => setTemplate
