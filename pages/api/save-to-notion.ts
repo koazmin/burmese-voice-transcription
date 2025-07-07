@@ -16,7 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const databaseId = process.env.NOTION_DATABASE_ID;
 
     const properties = {
-      Name: { title: [{ text: { content: `${template.charAt(0).toUpperCase() + template.slice(1)} Note` }] },
+      Name: {
+        title: [
+          {
+            text: {
+              content: `${template.charAt(0).toUpperCase() + template.slice(1)} Note`
+            }
+          }
+        ]
+      }
     };
 
     let blocks: any[] = [];
@@ -27,25 +35,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case 'meeting_notes':
         blocks = [
           { heading_2: { rich_text: [{ text: { content: 'Meeting Notes' } }] } },
-          { paragraph: { rich_text: [{ text: { content: transcription } }] } },
+          { paragraph: { rich_text: [{ text: { content: transcription } }] } }
         ];
         break;
       case 'brainstorming_ideas':
         blocks = [
           { heading_2: { rich_text: [{ text: { content: 'Brainstorming Ideas' } }] } },
-          { bulleted_list_item: { rich_text: [{ text: { content: transcription } }] } },
+          { bulleted_list_item: { rich_text: [{ text: { content: transcription } }] } }
         ];
         break;
       case 'quick_notes':
         blocks = [
           { heading_2: { rich_text: [{ text: { content: 'Quick Notes' } }] } },
-          { paragraph: { rich_text: [{ text: { content: transcription } }] } },
+          { paragraph: { rich_text: [{ text: { content: transcription } }] } }
         ];
         break;
       case 'summary':
         blocks = [
           { heading_2: { rich_text: [{ text: { content: 'Summary' } }] } },
-          { paragraph: { rich_text: [{ text: { content: transcription } }] } },
+          { paragraph: { rich_text: [{ text: { content: transcription } }] } }
         ];
         break;
       default:
